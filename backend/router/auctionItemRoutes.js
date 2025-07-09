@@ -2,11 +2,12 @@ import { addNewAuctionItem, getAllItems, getAuctionDetails, getMyAuctionItems, r
 import { isAuthenticated } from "../middlewares/auth.js";
 import express from "express";
 import { isAuthorized } from "../middlewares/auth.js";
+import { trackCommissionStatus } from "../middlewares/trackCommissionStatus.js";
 
 const router =express.Router();
 
 
-router.post("/create",isAuthenticated, isAuthorized("Auctioneer"),addNewAuctionItem);
+router.post("/create",isAuthenticated, isAuthorized("Auctioneer"),trackCommissionStatus,addNewAuctionItem);
 router.get("/allitems",getAllItems);
 router.get("/auction/:id",isAuthenticated,getAuctionDetails);
 router.get("/myitems",isAuthenticated,isAuthorized("Auctioneer"),getMyAuctionItems);

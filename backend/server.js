@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import app from "./app.js"
 import cloudinary from "cloudinary"
 import connectDB from "./database/connection.js";
@@ -11,9 +14,13 @@ cloudinary.v2.config({
     api_secret:process.env.CLOUDINARY_API_SECRET,
 })
 app.get("/", (req, res) => {
-    res.send("Server is working fine!");
+    console.log("GET / route hit");
+    res.send("Server is working fine");
   });
+  
 
-app.listen(process.env.PORT,()=>{
-    console.log(`Server listening on port ${process.env.PORT}`);
-});
+  const PORT = process.env.PORT || 5050;
+
+  app.listen(PORT, () => {
+    console.log(`Server Listening on port ${PORT}`);
+  });

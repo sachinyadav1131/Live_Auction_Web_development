@@ -11,8 +11,7 @@ const userSchema = new mongoose.Schema({
     password:{
         type:String,
         select: false,
-        minLength:[8,"Password must contain at least 8 characters."],
-        maxLength:[32,"Password cannot exceed 40 characters."],
+        minLength:[8,"Password must contain at least 8 characters."]
     },
     email: {
         type: String,
