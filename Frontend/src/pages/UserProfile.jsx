@@ -116,12 +116,12 @@ const UserProfile = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Bank Account (IBAN)
+                        Bank Account IFSC Code
                       </label>
                       <input
                         type="text"
                         defaultValue={
-                          user.paymentMethods.bankTransfer.bankAccountNumber
+                          user.paymentMethods.bankTransfer.bankIFSCCode
                         }
                         className="w-ful mt-1 p-2 border-gray-300 rounded-md focus:outline-none"
                         disabled
@@ -147,7 +147,7 @@ const UserProfile = () => {
                       <input
                         type="text"
                         defaultValue={ 
-                          user.paymentMethods.bank.bankAccountNumber
+                          user.paymentMethods.bankTransfer.bankAccountNumber
                         }
                         className="w-ful mt-1 p-2 border-gray-300 rounded-md focus:outline-none"
                         disabled
