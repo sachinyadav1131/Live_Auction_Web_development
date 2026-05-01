@@ -7,6 +7,8 @@ import { RiAuctionFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+import {io} from "socket.io-client";
+
 const AuctionItem = () => {
   const { id } = useParams();
   const { loading, auctionDetail, auctionBidders } = useSelector(
@@ -18,21 +20,42 @@ const AuctionItem = () => {
   const dispatch = useDispatch();
 
   const [amount, setAmount] = useState(0);
-  const handleBid = () => {
+  const handleBid = async () => {
     const formData = new FormData();
     formData.append("amount", amount);
-    dispatch(placeBid(id, formData));
-    dispatch(getAuctionDetail(id));
+
+    try {
+       await dispatch(placeBid(id, formData)).unwrap();
+    } catch (error) {
+       console.error("Bid failed:", error);
+    }
   };
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigateTo("/");
+      return;
     }
     if (id) {
+      // Fetch initial data
       dispatch(getAuctionDetail(id));
+
+      const socket = io("http://localhost:5000", {
+        withCredentials: true,
+      });
+
+      socket.emit("joinAuction", id);
+      socket.on("bidUpdated", () => {
+
+        dispatch(getAuctionDetail(id));
+      });
+
+      return () => {
+        socket.emit("leaveAuction", id);
+        socket.disconnect();
+      };
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, id, dispatch, navigateTo]);
   return (
     <>
       <section className="w-full ml-0 m-0 h-fit px-5 pt-20 lg:pl-[320px] flex flex-col">
