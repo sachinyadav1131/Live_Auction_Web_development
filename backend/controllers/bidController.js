@@ -3,6 +3,7 @@ import ErrorHandler from "../middlewares/error.js";
 import { Auction } from "../models/auctionSchema.js";
 import { Bid } from "../models/bidSchema.js";
 import { User } from "../models/userSchema.js";
+import { getIO } from "../socket.js";
 
 export const placeBid=catchAsyncErrors(async(req,res,next)=>{
     const {id}=req.params;
@@ -60,6 +61,12 @@ await auctionItem.save(); // ✅ saves both parent and embedded updates
       auctionItem.currentBid = amount;
     }
     await auctionItem.save();
+
+    const io = getIO();
+    io.to(`auction:${id}`).emit("bidUpdated", {
+      auctionId: id,
+      currentBid: auctionItem.currentBid,
+    });
 
     res.status(201).json({
       success: true,

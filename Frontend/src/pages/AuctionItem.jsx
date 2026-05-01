@@ -7,7 +7,7 @@ import { RiAuctionFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import {io} from "socket.io-client";
+import { io } from "socket.io-client";
 
 const AuctionItem = () => {
   const { id } = useParams();
@@ -42,12 +42,20 @@ const AuctionItem = () => {
 
       const socket = io("http://localhost:5000", {
         withCredentials: true,
+        transports: ["websocket"],
       });
 
       socket.emit("joinAuction", id);
-      socket.on("bidUpdated", () => {
+      socket.on("bidUpdated", (data) => {
+        if (data.auctionId === id) {
+          dispatch(getAuctionDetail(id));
+        }
+      });
 
-        dispatch(getAuctionDetail(id));
+      socket.on("auctionEnded", (data) => {
+        if (data.auctionId === id) {
+          dispatch(getAuctionDetail(id));
+        }
       });
 
       return () => {

@@ -1,9 +1,11 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import http from "http";
 import app from "./app.js"
 import cloudinary from "cloudinary"
 import connectDB from "./database/connection.js";
+import { initSocket } from "./socket.js";
 
 
 connectDB();
@@ -19,8 +21,11 @@ app.get("/", (req, res) => {
   });
   
 
-  const PORT = process.env.PORT || 5050;
+  const PORT = process.env.PORT || 5000;
 
-  app.listen(PORT, () => {
+  const server = http.createServer(app);
+  initSocket(server);
+
+  server.listen(PORT, () => {
     console.log(`Server Listening on port ${PORT}`);
   });

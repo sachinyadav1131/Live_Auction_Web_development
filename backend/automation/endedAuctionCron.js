@@ -4,11 +4,13 @@ import { User } from "../models/userSchema.js";
 import { Bid } from "../models/bidSchema.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { calculateCommission } from "../controllers/commissionController.js";
+import { getIO } from "../socket.js";
 
 export const endedAuctionCron = () => {
   cron.schedule("*/1 * * * *", async () => {
     console.log("✅ endedAuctionCron() called");
     const now = new Date();
+    const io = getIO();
     const endedAuctions = await Auction.find({
       endTime: { $lt: now },
       commissionCalculated: false,
@@ -92,6 +94,11 @@ Please complete your payment using one of the following methods:
         } else {
           await auction.save();
         }
+
+        io.to(`auction:${auction._id}`).emit("auctionEnded", {
+          auctionId: auction._id.toString(),
+          message: "Auction has ended",
+        });
       } catch (error) {
         console.error("❌ Error in ended auction cron:", error.message || error);
       }

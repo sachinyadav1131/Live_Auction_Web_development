@@ -33,7 +33,7 @@ const Card = ({ imgSrc, title, startingBid, startTime, endTime, id }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setTimeLeft(calculateTimeLeft());
-    });
+    }, 1000);
     return () => clearTimeout(timer);
   }, [timeLeft]);
 
