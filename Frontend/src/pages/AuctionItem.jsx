@@ -112,6 +112,12 @@ const AuctionItem = () => {
                       Rs.{auctionDetail.startingBid}
                     </span>
                   </p>
+                  <p className="text-xl font-semibold">
+                    Current Bid:{" "}
+                    <span className="text-[#D6482B]">
+                      Rs.{auctionDetail.currentBid || auctionDetail.startingBid}
+                    </span>
+                  </p>
                 </div>
               </div>
               <p className="text-xl w-fit font-bold">
@@ -152,6 +158,9 @@ const AuctionItem = () => {
                               {element.userName}
                             </p>
                           </div>
+                          <p className="text-[18px] font-semibold text-[#D6482B]">
+                            Rs.{element.amount}
+                          </p>
                           {index === 0 ? (
                             <p className="text-[20px] font-semibold text-green-600">
                               1st
