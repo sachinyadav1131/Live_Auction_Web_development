@@ -80,6 +80,10 @@ const superAdminSlice = createSlice({
     },
     successForUpdatePaymentProof(state, action) {
       state.loading = false;
+      state.singlePaymentProof = action.payload;
+      state.paymentProofs = state.paymentProofs.map((proof) =>
+        proof._id === action.payload._id ? action.payload : proof
+      );
     },
     failureForUpdatePaymentProof(state, action) {
       state.loading = false;
@@ -197,9 +201,11 @@ export const updatePaymentProof = (id, status, amount) => async (dispatch) => {
       { status, amount },
       { withCredentials: true, headers: { "Content-Type": "application/json" } }
     );
-    dispatch(superAdminSlice.actions.successForUpdatePaymentProof());
+    dispatch(
+      superAdminSlice.actions.successForUpdatePaymentProof(response.data.proof)
+    );
     toast.success(response.data.message);
-    dispatch(getAllPaymentProofs());
+    await dispatch(getAllPaymentProofs());
     dispatch(superAdminSlice.actions.clearAllErrors());
   } catch (error) {
     dispatch(superAdminSlice.actions.failureForUpdatePaymentProof());

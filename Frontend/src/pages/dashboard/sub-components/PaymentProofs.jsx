@@ -41,9 +41,9 @@ const PaymentProofs = () => {
           </thead>
           <tbody className="text-gray-700">
             {paymentProofs.length > 0 ? (
-              paymentProofs.map((element, index) => {
+              paymentProofs.map((element) => {
                 return (
-                  <tr key={index}>
+                  <tr key={element._id}>
                     <td className="py-2 px-4 text-center">{element.userId}</td>
                     <td className="py-2 px-4 text-center">{element.status}</td>
                     <td className="flex items-center py-4 justify-center gap-3">
@@ -85,17 +85,25 @@ export const Drawer = ({ setOpenDrawer, openDrawer }) => {
   const [amount, setAmount] = useState(singlePaymentProof.amount || "");
   const [status, setStatus] = useState(singlePaymentProof.status || "");
 
+  useEffect(() => {
+    setAmount(singlePaymentProof.amount || "");
+    setStatus(singlePaymentProof.status || "Pending");
+  }, [singlePaymentProof]);
+
   const dispatch = useDispatch();
   const handlePaymentProofUpdate = () => {
     dispatch(updatePaymentProof(singlePaymentProof._id, status, amount));
+    setOpenDrawer(false);
   };
 
   return (
     <>
       <section
-        className={`fixed ${
-          openDrawer && singlePaymentProof.userId ? "bottom-0" : "-bottom-full"
-        }  left-0 w-full transition-all duration-300 h-full bg-[#00000087] flex items-end`}
+        className={`fixed left-0 top-0 z-50 flex h-full w-full items-end bg-[#00000087] transition-all duration-300 ${
+          openDrawer && singlePaymentProof.userId
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
       >
         <div className="bg-white h-fit transition-all duration-300 w-full">
           <div className="w-full px-5 py-8 sm:max-w-[640px] sm:m-auto">
