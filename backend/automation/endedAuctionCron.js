@@ -89,7 +89,14 @@ Please complete your payment using one of the following methods:
 `;
 
           if (bidder?.email) {
-            await sendEmail({ email: bidder.email, subject, message });
+            try {
+              await sendEmail({ email: bidder.email, subject, message });
+            } catch (emailError) {
+              console.error(
+                `Email send failed for auction ${auction._id}:`,
+                emailError.message || emailError
+              );
+            }
           }
         } else {
           await auction.save();
