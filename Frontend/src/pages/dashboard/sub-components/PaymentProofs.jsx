@@ -6,13 +6,20 @@ import {
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const PaymentProofs = () => {
   const { paymentProofs, singlePaymentProof } = useSelector(
     (state) => state.superAdmin
   );
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [activeStatus, setActiveStatus] = useState("Pending");
   const dispatch = useDispatch();
+
+  const statuses = ["Pending", "Approved", "Rejected", "Settled"];
+  const filteredProofs = paymentProofs.filter(
+    (proof) => proof.status === activeStatus
+  );
 
   const handlePaymentProofDelete = (id) => {
     dispatch(deletePaymentProof(id));
@@ -30,6 +37,22 @@ const PaymentProofs = () => {
 
   return (
     <>
+      <div className="mb-4 flex flex-wrap gap-3">
+        {statuses.map((status) => (
+          <button
+            key={status}
+            type="button"
+            onClick={() => setActiveStatus(status)}
+            className={`rounded-md px-4 py-2 font-semibold transition-all duration-300 ${
+              activeStatus === status
+                ? "bg-[#D6482B] text-white"
+                : "bg-white text-stone-700 hover:bg-stone-100"
+            }`}
+          >
+            {status}
+          </button>
+        ))}
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white mt-5">
           <thead className="bg-gray-800 text-white">
@@ -40,8 +63,8 @@ const PaymentProofs = () => {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {paymentProofs.length > 0 ? (
-              paymentProofs.map((element) => {
+            {filteredProofs.length > 0 ? (
+              filteredProofs.map((element) => {
                 return (
                   <tr key={element._id}>
                     <td className="py-2 px-4 text-center">{element.userId}</td>
@@ -65,20 +88,24 @@ const PaymentProofs = () => {
               })
             ) : (
               <tr className="text-center text-xl text-sky-600 py-3">
-                <td>No payment proofs are found.</td>
+                <td colSpan="3">No {activeStatus.toLowerCase()} payment proofs are found.</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-      <Drawer setOpenDrawer={setOpenDrawer} openDrawer={openDrawer} />
+      <Drawer
+        setOpenDrawer={setOpenDrawer}
+        openDrawer={openDrawer}
+        setActiveStatus={setActiveStatus}
+      />
     </>
   );
 };
 
 export default PaymentProofs;
 
-export const Drawer = ({ setOpenDrawer, openDrawer }) => {
+export const Drawer = ({ setOpenDrawer, openDrawer, setActiveStatus }) => {
   const { singlePaymentProof, loading } = useSelector(
     (state) => state.superAdmin
   );
@@ -91,8 +118,19 @@ export const Drawer = ({ setOpenDrawer, openDrawer }) => {
   }, [singlePaymentProof]);
 
   const dispatch = useDispatch();
-  const handlePaymentProofUpdate = () => {
-    dispatch(updatePaymentProof(singlePaymentProof._id, status, amount));
+  const handlePaymentProofUpdate = async () => {
+    const normalizedAmount = Number(amount);
+    const originalAmount = Number(singlePaymentProof.amount);
+    const statusChanged = status !== (singlePaymentProof.status || "Pending");
+    const amountChanged = normalizedAmount !== originalAmount;
+
+    if (!statusChanged && !amountChanged) {
+      toast.info("No changes to update.");
+      return;
+    }
+
+    await dispatch(updatePaymentProof(singlePaymentProof._id, status, amount));
+    setActiveStatus(status);
     setOpenDrawer(false);
   };
 
