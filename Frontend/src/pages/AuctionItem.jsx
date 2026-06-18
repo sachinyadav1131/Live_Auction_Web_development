@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { io } from "socket.io-client";
+import { API_URL } from "@/config/api";
 
 const AuctionItem = () => {
   const { id } = useParams();
@@ -40,7 +41,7 @@ const AuctionItem = () => {
       // Fetch initial data
       dispatch(getAuctionDetail(id));
 
-      const socket = io("http://localhost:5000", {
+      const socket = io(API_URL, {
         withCredentials: true,
         transports: ["websocket"],
       });
