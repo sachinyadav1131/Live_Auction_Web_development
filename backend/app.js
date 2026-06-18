@@ -18,7 +18,7 @@ config({
 });
 
 app.use(cors({
-   origin:[process.env.FRONTEND_URL],
+   origin: [process.env.FRONTEND_URL, "https://live-auction-web-development.vercel.app"].filter(Boolean),
    methods:["POST","GET","PUT","DELETE"],
    credentials:true,
 }));

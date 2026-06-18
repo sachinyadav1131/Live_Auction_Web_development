@@ -5,7 +5,7 @@ let io;
 export const initSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
-      origin: [process.env.FRONTEND_URL],
+      origin: [process.env.FRONTEND_URL, "https://live-auction-web-development.vercel.app"].filter(Boolean),
       methods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true,
     },

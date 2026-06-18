@@ -171,9 +171,12 @@ export const login=catchAsyncErrors(async(req,res,next) =>{
  });
  
  export const logout=catchAsyncErrors(async(req,res,next) =>{
+    const isProduction = process.env.NODE_ENV === "production";
     res.status(200).cookie("token","",{
      expires: new Date(Date.now()),
      httpOnly: true,
+     secure: isProduction,
+     sameSite: isProduction ? "none" : "lax",
     })
     .json({
      success:true,
