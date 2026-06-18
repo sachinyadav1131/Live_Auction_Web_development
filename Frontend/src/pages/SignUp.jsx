@@ -2,6 +2,7 @@ import { register } from "@/store/slices/userSlice";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
   const [userName, setUserName] = useState("");
@@ -25,6 +26,24 @@ const SignUp = () => {
 
   const handleRegister = (e) => {
     e.preventDefault();
+
+    if (password.length < 8) {
+      toast.error("Password must contain at least 8 characters.");
+      return;
+    }
+    if (!/[A-Z]/.test(password)) {
+      toast.error("invalid password must contain atleast oneUppercase");
+      return;
+    }
+    if (!/[a-z]/.test(password)) {
+      toast.error("invalid password must contain atleast one lowercase");
+      return;
+    }
+    if (!/[\W_]/.test(password)) {
+      toast.error("invalid password must contain atleast one special character");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("userName", userName);
     formData.append("email", email);
@@ -167,6 +186,7 @@ const SignUp = () => {
                 <input
                   type="password"
                   value={password}
+                  placeholder="Min 8 chars, 1 uppercase, 1 special character"
                   onChange={(e) => setPassword(e.target.value)}
                   className="text-[16px] py-2 bg-transparent border-b-[1px] border-b-stone-500 focus:outline-none"
                 />

@@ -48,6 +48,19 @@ export const register= catchAsyncErrors(async(req,res,next) =>{
    if(!userName || !email || !phone || !password || !address || !role){
     return next(new Errorhandler("Please fill full form",400));
    }
+
+   if (password.length < 8) {
+     return next(new Errorhandler("Password must contain at least 8 characters.", 400));
+   }
+   if (!/[A-Z]/.test(password)) {
+     return next(new Errorhandler("invalid password must contain atleast oneUppercase", 400));
+   }
+   if (!/[a-z]/.test(password)) {
+     return next(new Errorhandler("invalid password must contain atleast one lowercase", 400));
+   }
+   if (!/[\W_]/.test(password)) {
+     return next(new Errorhandler("invalid password must contain atleast one special character", 400));
+   }
    
    if (role === "Auctioneer") {
   if (!bankAccountName || !bankAccountNumber || !bankName) {
